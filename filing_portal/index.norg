@@ -1,0 +1,29 @@
+* This is where i will make some some notes 
+  - ( )  2 fix vercel environment variables
+  -- (x) make a new build and make sure that there are no errors
+  -- ( ) if so make a pull request on the issue
+  -- ( ) explain
+
+
+* Issue: 4
+** https://gitlab.com/efilemadeeasy/portal/-/issues/4
+   added in the following csharp code to fix
+   @code csharp
+    app.UseCors(
+        options => options.WithOrigins(new string[] { 
+   "https://localhost:3000",
+   "https://stg.efilemadeeasy.com" // <--
+   "http://localhost:3000",                      
+   "https://zwicker.efilemadeeasy.com",                  
+   "https://v5.efilemadeeasy.com",
+   "http://tag-plugin.efilemadeeasy.com.s3-website-us-east-1.amazonaws.com",
+   "https://uat.efilemadeeasy.com",
+   })
+   .AllowCredentials()
+   .AllowAnyMethod()
+   .AllowAnyHeader()
+   )
+   @end
+
+   
+  

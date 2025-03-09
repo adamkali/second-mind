@@ -1,0 +1,16 @@
+* requests
+** so you here again here is the curl requests
+   url: /api/DocumentType/county/9c37c55b-05da-4a9c-026a-08d522e5495f/6fb21a0a-bc52-4187-ba8e-a0d7934a6075/1
+
+*** base
+   @code bash
+   curl -X GET \
+   https://localhost:44301/api/DocumentType/county/{countyId}/caseType/{caseTypeId}/update
+   @end
+
+ *** modify me
+   @code bash
+   curl -X GET \
+   https://localhost:44301/api/DocumentType/county/9c37c55b-05da-4a9c-026a-08d522e5495f/caseType/6fb21a0a-bc52-4187-ba8e-a0d7934a6075/update
+   @end
+

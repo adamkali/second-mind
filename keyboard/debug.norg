@@ -1,0 +1,213 @@
+@document.meta
+title: debug
+description: 
+authors: 
+categories: 
+created: 2025-03-08T08:05:59-0500
+updated: 2025-03-08T10:49:54-0500
+version: 1.1.1
+@end
+
+* Debug the keeb
+** trying to find the problem 
+   interestingly enough ther is something going wrontg with when the modules are being loaded
+   pog.py seems to be the first loaded.
+
+   strange as well. iseem to get the whole damn keyboard from n
+   @code python
+   import board
+   print(dir(board))
+   @end
+
+   @code python 
+[
+'__class__',
+    '__init__',
+    '__module__',
+    '__qualname__',
+    '__repr__',
+    '__dict__',
+    'deinit',
+    'row_pins',
+    'go',
+    '_send_hid',
+    '_init_hid',
+    'coord_mapping',
+    'col_pins',
+    'diode_orientation',
+    '_handle_matrix_report',
+    '_on_matrix_changed',
+    '_find_key_in_map',
+    'pre_process_key',
+    '_process_resume_buffer',
+    'process_key',
+    'resume_process_key',
+    'remove_key',
+    'add_key',
+    'tap_key',
+    'set_timeout',
+    'cancel_timeout',
+    '_process_timeouts',
+    '_init_coord_mapping',
+    '_deinit_hid',
+    '_init_matrix',
+    'during_bootup',
+    'before_matrix_scan',
+    'after_matrix_scan',
+    'before_hid_send',
+    'after_hid_send',
+    'powersave_enable',
+    'powersave_disable',
+    '_init',
+    '_main_loop'
+]
+   @end
+
+   looking into it looks like that there is something that is not being be brought into the kwargs of `kmk_keyboard.302`
+
+   it seems that when getting to the proper part of KMKKeyboard.go() there are not kwargs being sent in
+   so what i am going to do is by one by one check if there is something wrong with how it is being passed in,
+   thi 
+   @code python 
+   print(dir(self))
+   @end
+
+   block should tell me what is going on with that 
+   if those modules are not being brought in then i need to check if they are being loaded at all from the json.
+   the error in the code is saying the following:
+   `Object of type NoneType has no len()`
+   and that the kwargs are 
+   @code json
+   {'column_pins': None, 'columns_to_anodes': None, 'row_pins': None}
+   @end
+
+   this is because that when it is being loadade it is trying to load this 
+   @code python 
+   ...
+        if self.matrix is None:
+            print(dir(self))
+            self.matrix = MatrixScanner(
+                column_pins=self.col_pins,
+                row_pins=self.row_pins,
+                columns_to_anodes=self.diode_orientation,
+            )
+...
+   @end
+
+
+    it seems that all these 
+   - self.col_pins 
+   - self.row_pins
+   - self.diode_orientation
+     are none to python as we get there
+     checking why
+** the problem 
+   things were not getting properly getting initialized by the keyboard.
+   so.
+
+   - 1. we are going to first right out an implementation. one that onlyneeds the basics from the readme. 
+   - 2. thumb cluster borked
+   @code python
+
+    [ 
+        KC.N1,       KC.N2,        KC.N3,       KC.N4,       KC.N5,     KC.N6,
+        # rshift           home          mo2          bs            esc         end
+
+    ]
+   @end
+   - 3. had to add in this as the thumb cluster into the array
+    - "KC.RSFT",
+    - "KC.HOME",
+    - "KC.MO(2)",
+   -- "KC.HT(KC.BSPC, KC.MO(2), prefer_hold=False, tap_time=200)",
+   -- "KC.ESC",
+   -- "KC.END",
+   - 4. now adding the arrow keys 
+   @code python 
+            KC.LEFT,
+            KC.DOWN,
+            KC.UP,
+            KC.RIGHT,
+   @end
+   in th htns 
+
+** solution 
+   what i had to do was to make a custom implementation with kmk from scratch 
+   so here is what i did.
+   @code python 
+    # Main Keyboard Configuration - v1.0.0
+    from kmk.keys import KC
+    from kmk.modules.holdtap import HoldTap
+    from kmk.modules.layers import Layers
+    from kmk.modules.split import Split, SplitType, SplitSide
+    import board
+    
+    from kmk.kmk_keyboard import KMKKeyboard
+    from kmk.keys import KC
+    from kmk.scanners import DiodeOrientation
+    trns = KC.TRNS
+    
+    
+    keyboard = KMKKeyboard()
+    keyboard.modules.append(HoldTap())
+    keyboard.modules.append(Layers())
+    split = Split(
+        split_flip=True,  # If both halves are the same, but flipped, set this True
+        split_side=SplitSide.LEFT,  # Sets if this is to SplitSide.LEFT or SplitSide.RIGHT, or use EE hands
+        split_type=SplitType.UART,  # Defaults to UART
+        uart_interval=20,  # Sets the uarts delay. Lower numbers draw more power
+        data_pin=board.RX,  # The primary data pin to talk to the secondary device with
+        use_pio=True,  # Use RP2040 PIO implementation of UART. Required if you want to use other pins than RX/TX
+    )
+    keyboard.modules.append(split)
+    
+    AdamH  = KC.HT(KC.H, KC.LCTL, prefer_hold=False, tap_time=200)
+    AdamT  = KC.HT(KC.T, KC.LALT, prefer_hold=False, tap_time=200)
+    AdamN  = KC.HT(KC.N, KC.MEH, prefer_hold=False, tap_time=200)
+    AdamS  = KC.HT(KC.S, KC.LGUI, prefer_hold=False, tap_time=200)
+    AdamM  = KC.HT(KC.M, KC.LSFT, prefer_hold=False, tap_time=200)
+    AdamBS = KC.HT(KC.BSPC, KC.MO(2), prefer_hold=False, tap_time=200from kmk.modules.split import Split, SplitType, SplitSide)
+    
+    
+    row_pins= ( board.A2, board.A1, board.A0, board.CLK, board.MISO, board.MOSI, )
+    col_pins= ( board.D2, board.D3, board.D4, board.D5,  board.D6,   board.D7,   )
+    keymap = [
+        [
+          KC.N6,       KC.N7,       KC.N8,       KC.N9,       KC.N0,      KC.CAPS,
+          KC.F,        KC.G,        KC.C,        KC.R,        KC.L,       KC.SLSH,
+          KC.D,        AdamH,       AdamT,       AdamN,       AdamS,      KC.MINS,
+          KC.B,        AdamM,       KC.W,        KC.V,        KC.Z,       KC.BSLS,
+          trns,        trns,        trns,        trns,        trns,       trns,
+          KC.RSFT,     KC.HOME,     KC.MO(2),    AdamBS,      KC.ESC,     KC.END,
+        ],
+        [
+          trns,        trns,        trns,        trns,        trns,       trns,
+          trns,        trns,        trns,        trns,        trns,       trns,
+          trns,        KC.LEFT,     KC.DOWN,     KC.UP,       KC.RIGHT,   trns,
+          trns,        trns,        trns,        trns,        trns,       trns,
+          trns,        trns,        trns,        trns,        trns,       trns,
+          trns,        trns,        trns,        trns,        trns,       trns,
+        ],
+        [ 
+          trns,        trns,        trns,        trns,        trns,       trns,
+          trns,        KC.F9,        KC.F10,     KC.F11,      KC.F12,     trns,
+          trns,        KC.F5,        KC.F6,      KC.F7,       KC.F8,      trns,
+          trns,        KC.F1,        KC.F2,      KC.F3,       KC.F4,      trns,
+          trns,        trns,        trns,        trns,        trns,       trns, ]
+    ]
+    
+    
+    keyboard.col_pins = col_pins 
+    keyboard.row_pins = row_pins
+    keyboard.diode_orientation = DiodeOrientation.COL2ROW
+    
+    keyboard.keymap = keymap
+    
+    if __name__ == '__main__':
+        keyboard.go()
+   @end
+
+   this seems to work fine so now i will load up the other side, copy it over and just do it again but for my old config
+
+
+

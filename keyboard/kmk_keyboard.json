@@ -1,0 +1,5 @@
+            "KC.RESET", "KC.N1", "KC.N2", "KC.N3", "KC.N4", "KC.N5", "KC.CAPS",
+            "KC.GRV", "KC.QUOT", "KC.COMM", "KC.DOT", "KC.P", "KC.Y",
+            "KC.EQL", "AdamA", "AdamO", "AdamE", "AdamU", "KC.I",
+            "KC.F1", "KC.SCLN", "KC.Q", "KC.J", "KC.K", "KC.X",
+            "KC.LSFT", "KC.MO(1)", "KC.LSFT(KC.TAB)", "KC.TAB", "KC.ENT", "KC.HT(KC.SPC, KC.MO(1), prefer_hold=False, tap_time=200)",

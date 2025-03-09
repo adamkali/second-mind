@@ -1,0 +1,18 @@
+@document.meta
+title: make-the-dashboard-great-again
+description: 
+authors: 
+categories: 
+created: 2025-03-05T16:51:03-0500
+updated: 2025-03-05T17:26:05-0500
+version: 1.1.1
+@end
+
+* Make The Dashboard Great Again
+** RFC do is make the dashboard for v5 to be better.
+   mainly right now when logging into the `<any>.efilemadeeasy.com/` gives a blank page instead of going straigt to the dashboard. Regardless half of the ui in the dashboard page is useless to users. So the idea is to come up with certain aspects with the dashboard to help filers and users to get the most information possible at the dashboard. Add Links to the Certain applications (matter managment, queue, reporting, etc)
+   - ( ) Update the ui with the `@mui`
+   - ( ) Update the ui to have more useful information for users 
+   - ( ) Update the ui to have more tools quickly available for filers 
+   - ( ) Add links to other website tools.
+

@@ -1,0 +1,98 @@
+@document.meta
+title: index
+description: Fullstack App documentation
+authors: Adam Kalinowski
+categories: FOSS
+created: 2025-03-05T15:30:48-0500
+updated: 2025-03-07T12:56:25-0500
+version: 1.1.1
+@end
+
+----
+({:../index.norg:})
+----
+
+
+
+```
+            ████████████████        
+          ██                ██      
+      ████    ░░░░░░░░        ██    
+    ██      ░░      ░░░░        ██  
+  ██      ░░          ░░░░        ██
+  ██      ░░          ░░░░        ██
+██        ░░▒▒░░  ░░░░░░░░        ██
+██░░        ░░░░░░░░░░░░        ░░██
+  ██░░        ░░░░░░░░        ░░██  
+  ██░░░░                    ░░██    
+    ████░░░░            ░░░░██      
+        ████░░░░░░░░░░░░████        
+            ████████████            
+```
+
+* Egg
+** What is this thing? 
+   Simple this is a fullstack application made to be an easy way for gophers to get set up and deploy to a vps. Whethere that means using:
+   - Docker Compose? 
+   - Dockerfile
+   - VPS?
+   - Coolify?
+
+     All of these options should be available to anyone while using this framework
+
+** How does it work?
+   Very simple. It works with some very popular tools in the golang ecosystem.
+   - Echo web serever 
+   - Goose Migrations 
+   - Sqlc Migrations
+   - and an easy way to inject a Javascript framework using frontend property in the config for a SPA
+   - or use templ + htmx + alpine js
+
+   The main thing to be aware of is that the `config/` should be the lifeline of your development cycle with egg find `config/configureme.yaml` in your project it should look like this 
+
+   @code yaml
+    # this is your configuration file in its full glory
+    # use it to your hearts content
+    #
+    # make sure as well that any configuration that you use will be 
+    # ignored from public repositories 
+
+    # the name of your server
+    name: fullstack_app
+    # sem version of the server
+    # use 
+    #  - `go run main.go version bump` to auto increment specific
+    #  - `go run main.go version bump -m` to auto increment minor
+    #  - `go run main.go version bump -M` to auto increment major
+    semver: 0.0.1
+    server:
+      # configure the port of the server
+      port: 5000
+      # use this to show where to show the ui
+      frontend:
+        dir: frontend/dist
+      database:
+        # use a url for simplicity 
+        url: ""
+        # when generating code from migrations,
+        # use sql to allow goose create the migration with sql
+        # use go to allow goose creat the migration with go
+        sqlc: sql
+        migration:
+          # tell goose what protocol that you would like to use 
+          # the protocols are listed on goose's github
+          protocol: 
+          # specify the location of the migrations you wish to use
+          destination: ""
+      cache:
+        url: ""
+      s3:
+        url: ""
+        access: 
+        secret:
+   @end
+
+** A note about `services/`
+   `services` is meant to be a way to have an entry place for interactions either with third party services, database, s3 storagaes, or something else entirely.
+   But why you may be asking. It is honestly really simple. You should be able to rip out your frontend what ever it is, whether templates that are returned by that stack, or a bloated create-react-app frankenstine, and not have to worry about the resulting consequences.
+
