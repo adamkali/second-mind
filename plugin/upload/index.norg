@@ -1,0 +1,13 @@
+@document.meta
+title: index
+description: 
+authors: 
+categories: 
+created: 2025-03-12T15:50:44-0500
+updated: 2025-03-12T15:53:34-0500
+version: 1.1.1
+@end
+
+* Upload Plugin 
+** 12/03/2025 
+   there is a bug with the text box

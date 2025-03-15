@@ -1,8 +1,8 @@
 * This is where i will make some some notes 
-  - ( )  2 fix vercel environment variables
+  - (x)  2 fix vercel environment variables
   -- (x) make a new build and make sure that there are no errors
-  -- ( ) if so make a pull request on the issue
-  -- ( ) explain
+  -- (x) if so make a pull request on the issue
+  -- (x) explain
 
 
 * Issue: 4
@@ -27,3 +27,191 @@
 
    
   
+* Issue: 5 
+** issue
+   In the filing portal, `112ec5e5-433e-4941-9bae-7eb81462c30a` can be found easily, but when looking for it in true filing portal it does not find it. 
+   - ( ) Check in the True Filing portal so that we can see what is happenning 
+   -- (x) see if we can get it to submit through the portal 
+   -- (x) take a note on the submission request,
+   -- ( ) See what is different when submitting through the portal, and in pyportal workflow 
+   -- ( ) Pyportal workflow responds with 400
+
+*** Checking the True Filing Portal 
+    the information that i should be seeing in the portal to get the data from our portal is:
+    @code json
+    MI Ottawa 20th Circuit Court
+    2015-004327-CK
+    @end
+
+*** Found it, the case number is `2015-0000004327-CK`
+    so now we are goning to use the submission request to see what is happening when we are getting things through
+    the submission request on the validation os 
+    INGRAM
+    @code json 
+    {
+        "selectedCase": {
+            "id": "2015-0000004327-CK",
+            ...
+        },
+        ...
+        "files": [
+            {
+                "filingId": "b69458df-1559-4983-ac5c-119ecb6421ef",
+                "filingName": "RR-0002149545_MOTION--5FnFgb9171351",
+                "actualFileName": "RR-0002149545_MOTION--5FnFgb9171351.pdf",
+                "size": 196988,
+                "filePointer": "2025/3/10/fca98d26-9e06-49c7-b7ed-f08a564cfc59.tcd",
+                "contentType": "application/pdf",
+                "buffer": "",
+                "documentType": "select",
+                "documentTypeDescription": "Proposed Judgment/Order",
+                "uploadStatus": 2,
+                "isOpen": false,
+                "hasNote": false,
+                "sealed": false,
+                "confidential": false,
+                "containsUnappliedRedactions": false,
+                "connectedDocuments": [],
+                "originalFilePointer": "2025/3/10/d9c52660-def5-4643-9302-526c6e1cafa8.tcd",
+                "filingTypeDataEntered": true,
+                "fee": 0,
+                "isAdjustableFee": false,
+                "documentSubTypes": []
+            }
+        ],
+        "selectedContacts": [
+            {
+                 "fullName": "RALPH M. REISINGER",
+                 "email": "RREISINGER@REISINGERLAW.COM",
+                 "jobTitle": "ATTORNEY",
+                 "barNumbers": [
+                      "MI-35645"
+                 ],
+                 "company": null,
+                 "serviceType": "e-Serve",
+                 "selected": true,
+                 "canChange": false
+            },
+            {
+                 "fullName": "SCOTT ANDREW RENNER",
+                 "email": "EFILEMICHIGAN@VELO.LAW",
+                 "jobTitle": "ATTORNEY",
+                 "barNumbers": [
+                      "MI-73003"
+                 ],
+                 "company": null,
+                 "serviceType": "e-Serve",
+                 "selected": true,
+                 "canChange": false
+            }
+        ],
+    }
+    @end
+
+*** Checking whether ther is somith ng that i can do with it 
+    there seems to be something in 
+    @code python
+    
+    def MiPortal.__populate_fields__(self, efme_submission : Submission):
+        for i in range(1, len(self.submission["files"])):
+            self.submission["files"][i]["base64String"] = "" # WILL NOT BE '' WHEN FILING BATCHES PRESUMABLY
+        self.submission["paymentAccountId"] = self.payment_method['id']
+        self.submission["isCaseInitiation"] = '-a-0' in efme_submission.filename # WILL NOT BE UNTIL BATCHES
+        #self.submission["incompleteFilingId"] = str(UUID(0)) #self.submission['bundleId']
+        self.submission["matterNumber"] = efme_submission.caseData.clientMatterNumber
+        self.submission["roleId"] = self.filer.roleId
+        self.submission["filerRole"] = self.filer.roleName
+        self.submission["filedForName"] = self.filer.name
+        self.submission["filedForId"] = self.filer.id
+        self.submission["filedForUserId"] = self.filer.id
+        self.submission["filedForTypeId"] = self.filer.filedForTypeId
+        self.submission["reporterNumber"] = self.filer.roleNumber # bar number
+        self.submission["servicingType"] = "FileOnly" # CAN ALSO BE SERVE DOCUMENT AS WELL, OR BOTH
+        self.submission["files"][0]["uploadStatus"] = 2 # SHOULD MEAN THAT IT IS SAVED IN THEIR STORAGE BUCKET
+        #self.submission["files"][0]["documentSubTypes"] = [] 
+        #self.submission["files"][0]["fee"] = 0 # NOT KNOWN, *BUT* VERY LIKELY
+        return
+    @end
+
+*** here is my first implementation of what to do 
+
+
+    @code python
+    # innput the submission from the case data from the existing case
+    def MiPortal.__populate_fields__(self, efme_submission : Submission):
+        for i in range(1, len(self.submission["files"])):
+            ...
+            self.submission["selectedContacts"] = self.select_contacts() #  +++++ THIS IS what i added
+            ...
+            return
+    
+    @end
+    next i need i made the `self.select_contacts()`
+    @code python
+    def select_contacts(self):
+        contacts  = list(dict())
+        [contacts.append(party) for party in self.submission["selectedCase"]["counsel"] ]
+        [contacts.append(party) for party in self.submission["selectedCase"]["parties"] ]
+
+        contactsInClasses = [Contact(party) for party in contacts]
+        return json.dumps(contacts)
+    @end
+    and then made the `Contact()` class to be used. this was a simple means by taking the json that was already stored in there and converting on the spot
+    @code python
+    
+    class Contact:
+        """
+    {
+        "fullName": "SCOTT ANDREW RENNER",
+        "email": "EFILEMICHIGAN@VELO.LAW",
+        "jobTitle": "ATTORNEY",
+        "barNumbers": [ "MI-73003" ],
+        "company": null,
+        "serviceType": "e-Serve",
+        "selected": true,
+        "canChange":false
+    }
+    """
+    fullName: str = ""
+    email: str = ""
+    barNumbers: List[str] = []
+    jobTitle: str = ""
+    company =  None
+    serviceType= "e-Serve"
+    selected= False
+    canChange = False
+    def __init__(self, d: Optional[Dict[str, Any]]) -> None:
+        if d is None:
+            return 
+
+        maybeFullName = d.get("name")
+        if  maybeFullName is not None:
+            self.fullName = maybeFullName
+
+        maybeJobTitle = d.get("role")
+        if maybeJobTitle is not None:
+            self.jobTitle = maybeJobTitle
+            if maybeJobTitle == "ATTORNEY":
+                self.barNumbers = d.get("ATTORNEY") 
+                self.selected = True
+            if maybeJobTitle == "DEFENDANT" and d.get("selfRepresented") is not None and d["selfRepresented"] == True:
+                self.selected = True
+        
+        maybeEmail = d.get("email")
+        if maybeEmail is not None:
+            self.email = maybeEmail
+        return
+
+    __dict__ = {
+            "fullName": fullName,
+            "email": email,
+            "jobTitle": jobTitle,
+            "barNumbers": barNumbers,
+            "company": company,
+            "serviceType": serviceType,
+            "selected": True,
+            "canChange": False
+        } 
+
+    @end
+
