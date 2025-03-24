@@ -1,0 +1,18 @@
+@document.meta
+title: 21
+description: 
+authors: 
+categories: 
+created: 2025-03-21T12:05:21-0500
+updated: 2025-03-21T12:33:55-0500
+version: 1.1.1
+@end
+
+* 21/03/2025
+  - (-) Run the swagger and upload a stupid profile picture
+  -- ( ) Need to update the api to check if the bucket is already created. if so skip it and then just go ahead and skip creation.
+  - ( ) Get the profile picture
+  - ( ) create a frontend real quick
+
+
+

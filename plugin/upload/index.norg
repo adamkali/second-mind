@@ -4,10 +4,30 @@ description:
 authors: 
 categories: 
 created: 2025-03-12T15:50:44-0500
-updated: 2025-03-12T15:53:34-0500
+updated: 2025-03-20T10:13:45-0500
 version: 1.1.1
 @end
 
 * Upload Plugin 
 ** 12/03/2025 
    there is a bug with the text box
+
+** Note to the staff 
+   /@all Hi there everyone, just to update, the word plugin should work as expected now. If there are any clients that are still having any problems with the plugin please walk the caller through these steps:/
+   - 1 Please have the caller to remove the _eFileMadeEasyUpload_ Plugin.
+   -- Right click the Plugin icon at the top of the taskbar.
+   -- Click _Remove Add-in_ in the menu
+   - 2 Get the latest version.
+   -- This can be done by finding the _Add-ins_ button on the Word taskpane.
+   -- This can be found in the Home tab of Word or the Insert Tab of Word.
+   -- Click the _Add-ins_ button, and select _More Add-ins_
+   -- And then just Search for eFileMadeEasyUpload and install.
+   - 3 If the ui is still not updated, make sure to have the user delete everything in `C:\\User\\<CLIENT>\\AppData\\Local\\Microsoft\\Office\\16.0\\Wef` folder
+   - 4 Then have the user *Right Click* the Plugin taskpane, and click reload in the menu that pops up.
+
+   I hope this helps! Please dm me if there are any questions, comments, or problems! 
+   Happy day after Saint Paddy's!
+** Things to do.
+   - ( ) need to add error messages
+   - ( ) Need to ask dario aboout my checklist
+   - ( ) lets make something great

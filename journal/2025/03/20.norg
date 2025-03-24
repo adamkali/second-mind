@@ -1,0 +1,30 @@
+@document.meta
+title: 20
+description: 
+authors: 
+categories: 
+created: 2025-03-20T12:40:45-0500
+updated: 2025-03-20T13:16:46-0500
+version: 1.1.1
+@end
+
+* 20/03/2025
+** ML Palma document classifier
+  Today i am working on the Palma document classifier. Should be ok as long as I get the multi processing done asap if the textract is not any faster. It will need to be that i include multiprossecor library and through like 10 threads at it. you can see my notes {:../../../experimental/ml.norg:}[here]. 
+** Fullstack app 
+   for this i am going to try and get more done with this and make sure that i can create aprofile picture. upload a backup profile picture for those who do not upload one. and an update function as well.
+   if both of those go well by the end of it. we can also implement the Redis service and check that to help with that  
+** Starship and  literate config 
+   Oh my gosh. this was an absolute success. I cannot believe how nice it was to use norg to tangle and now that i have the following keymaps:
+   @code lua
+   local neorg_leader = "<space>n"
+   wk {
+       { neorg_leader,        expr = false,                          group = "[N]eorg",                   nowait = false, remap = false },
+       { neorg_leader .. 'n', '<cmd>:Neorg workspace org_mode<cr>',  desc = '[n]eorg [n] activate' },
+       { neorg_leader .. 't', '<cmd>:Neorg toc qflist<cr>',          desc = '[n]eorg [t]able of contents' },
+       { neorg_leader .. '.', '<cmd>:Neorg tangle current-file<cr>', desc = '[n]eorg tangle [.]' },
+       { neorg_leader .. 'i', '<cmd>:Neorg inject-metadata<cr>',     desc = '[n]eorg [i]nject metadata' },
+   }
+   @end
+   Editing the with neorg has become like second nature with config files now i dont think that there will be any need for me to use neorg in place of regular projects. especially because there is no way to actually load in an lsp that being said however. I have really adored the ability to have a decent and competant editor. It feels so nice to be able to just write in natural language and figure out what i need.
+

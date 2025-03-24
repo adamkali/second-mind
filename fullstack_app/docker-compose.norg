@@ -1,0 +1,77 @@
+@document.meta
+title: docker-compose
+description: literate programing a docker-compose.yaml as a way to test out tangle
+authors: Adam Kalinowski
+categories: [
+    Docker,
+    CI,
+    CD
+]
+tangle: {
+    languages: {
+        yaml: /home/adamkali/containers/egg_app/docker-compose.yml
+    }
+    delimiter: heading
+}
+created: 2025-03-18T13:02:46-0500
+updated: 2025-03-18T21:07:16-0500
+version: 1.1.1
+@end
+
+* Docker Compose for Egg app 
+  This is meant to be a test for me to bring about the literate programing for me and test out the tangle feature. 
+** Tangle is a way to export code from code blocks and export them as real files
+   Why do i want to do this? Because I believe that being able to thorough examples and documentation is easier when you are able to do polyglot programing. 
+** For this testing we are going to use this sample config from egg 
+
+** Postgres
+   first we are going to need the database because that is far more important then anything else.
+   #tangle
+   @code yaml
+    services:
+      test-db:
+        image: 'postgres:latest'
+        volumes:
+          - 'postgres_data:/var/lib/postgresql/data'
+        environment:
+          - 'POSTGRES_USER=postgres'
+          - 'POSTGRES_PASSWORD=123abc!'
+          - 'POSTGRES_DB=postgres'  
+   @end
+** Fullstack App (egg server)
+   #tangle
+   @code yaml
+      test-server:
+        image: 'ghcr.io/adamkali/fullstack_app:nightly'
+        volumes:
+          - type: bind
+            target: /app/config/production.yaml
+
+   @end
+** The config file that i want to use 
+   #tangle
+   @code yaml
+            content: |
+              name: fullstack_app
+              semver: 0.0.1
+              server:
+                jwt: wf6WUMdZTcnnmzX37JXme7BsJ6AP5JpnTZKmpKV8PZdTBgRgDxzNSrt5d95Vsch7
+                port: 5000
+                frontend:
+                  dir: frontend/dist
+                database:
+                  url: postgres://postgres:123abc!@d4kcksss4804w8k0000sgksc:5432/postgres 
+                  sqlc: sql
+                  migration:
+                    protocol: postgres
+                    destinaiton: internal/migrations
+                cache:
+                  url: redis://default:ieIYj4d5znFA1uDUYZad5qdQ9rIK97Ix49W6tqaEt4ouH8uTqZssw2EAGcUGeU27@ow4csoo0484gkkcwg0wowsc0:6379/0
+                s3:
+                  url: https://minio-c0ww8kck048k88cgwskwoks8.kalilarosa.xyz
+                  access: ezUeVs7fco834Ym2FmRX
+                  secret: WbqnhUSC7LwpXZxFcEjHkGmVGsBShuCzHHnYYzTr 
+   @end
+
+
+
