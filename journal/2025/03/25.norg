@@ -1,0 +1,23 @@
+@document.meta
+title: 25
+description: 
+authors: 
+categories: 
+created: 2025-03-24T11:47:51-0500
+updated: 2025-03-24T18:31:45-0500
+version: 1.1.1
+@end
+
+* 03/24/2025
+** to do (egg) 
+   - ( ) Get the frontend to work properly.
+   - ( ) Update the config so that everything is not just under server. 
+   -- ( ) Database, 
+   -- ( ) Redis, 
+   -- ( ) S3,
+   - ( ) Create a decent frontend templates just index.html and showcase what can be done 
+   -- (-) Solid
+   --- ( ) Admin.tsx: this should be just a simple scrollable table to see the users. should not be accessible to anyone other than admins
+   --- ( ) App.tsx: 
+   --- ( ) Profile.tsx: this should be a Profile to add more profile details and upload a profile picture.
+   --- ( ) Also add GetProfilePic as well because it will be cool.

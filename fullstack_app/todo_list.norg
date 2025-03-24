@@ -35,9 +35,14 @@
   --- ( ) Database, 
   --- ( ) Redis, 
   --- ( ) S3,
-  -- ( ) Fix the Github workflows so that it will work with secrets and testing
+  -- (x) Fix the Github workflows so that it will work with secrets and testing
   -- ( ) Create a decent frontend templates just index.html and showcase what can be done 
   --- (-) Solid
+  ---- ( ) Admin.tsx
+  ---- ( ) App.tsx
+  ---- (x) Login.tsx
+  ---- ( ) Profile.tsx
+  ---- (x) Signup.tsx
   --- (=) React  
   --- (=) Svelte 
   --- (=) THAT stack (templ, htmx, alpinejs, tailwindcss) 
@@ -95,3 +100,48 @@
        Promote(Configuration *configuration.Configuration) error
    }
    @end
+
+
+** chat 
+   Hi ollama, I am writing a fullstack web framework written in golang. and i really enjoy learning all the odds and ends. I have hit a snag however and i was hoping that you can help me with figuring out how to properly do something. So lets say i have thefolling code block:
+   @code go
+    e := echo.New()
+   ...
+    e.Static("/", config.Server.Frontend.Dir)
+   ...
+
+   @end
+   and the config struct is defined in the following code.
+   @code go
+    type Configuration struct {
+    Name   string `yaml:"name"`
+        Semver string `yaml:"semver"`
+        Server struct {
+            JWT      string `yaml:"jwt"`
+            Port     int    `yaml:"port"`
+            Frontend struct {
+                Dir string `yaml:"dir"`
+                Api string `yaml:"api"`
+            } `yaml:"frontend"`
+            Database struct {
+                URL       string `yaml:"url"`
+                Sqlc      string `yaml:"sqlc"`
+                Migration struct {
+                    Protocol    string `yaml:"protocol"`
+                    Destination string `yaml:"destination"`
+                } `yaml:"migration"`
+            } `yaml:"database"`
+            Cache struct {
+                URL string `yaml:"url"`
+            } `yaml:"cache"`
+            S3 struct {
+                URL    string `yaml:"url"`
+                Access string `yaml:"access"`
+                Secret string `yaml:"secret"`
+            } `yaml:"s3"`
+        } `yaml:"server"`
+    }
+   @end
+   it seems that the dist file gets does not load properly. for example when going to the `/login` location of the server served from the built javascript does first goes to the `/` location and takes some time to the proper route. Is there a better way to serve the dist file with the echo framework v4 to serve a built javascript dist folder 
+
+

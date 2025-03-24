@@ -4,10 +4,10 @@ description:
 authors: 
 categories: 
 created: 2025-03-20T13:13:04-0500
-updated: 2025-03-20T13:16:10-0500
+updated: 2025-03-24T17:23:49-0500
 version: 1.1.1
 @end
 
-* Palma Document Predictor
-  It crashed for some reason and i do not know why. But i restarted it. and I will leave my computer unlocked if you want to tak a look at it   
-
+** Running the program for 150_000 bitties
+   - we are goning to start off with ocr-ing the first 150 thousand documents so for $6\\frac{\\textrm{s}}{\\textrm{doc}} \\times 150,000 \\textrm{doc}} = 10 \\textrm{days} $
+   - looks like python is maxing its resources on one core and is using ~3.1 GiB of memory at one time.
